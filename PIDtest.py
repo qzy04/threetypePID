@@ -26,19 +26,19 @@ def TestPID(P, I, D):
 
     for i in range(1, 500):
         # 增量式
-        IncrementalPid.SetStepSignal(100.2)  # 设置设定值
+        IncrementalPid.SetStepSignal(target)  # 设置设定值
         IncrementalPid.SetInertiaTime(3, 0.1)  # 设置惰性时间和采样时间
         IncrementalYaxis.append(IncrementalPid.SystemOutput)  # 制作Y轴列表
         IncrementalXaxis.append(i)  # x轴列表
 
         # 位置式
-        PositionalPid.SetStepSignal(100.2)
+        PositionalPid.SetStepSignal(target)
         PositionalPid.SetInertiaTime(3, 0.1)
         PositionalYaxis.append(PositionalPid.SystemOutput)
         PositionalXaxis.append(i)
 
         # 连续PID
-        c_PID.update(100.2)
+        c_PID.update(target)
         c_PID.SetInertiaTime(3, 0.1)
         c_PIDYaxis.append(c_PID.output)
         c_PIDXaxis.append(i)
@@ -66,12 +66,17 @@ def TestPID(P, I, D):
 
 if __name__ == "__main__":
     # TestPID(4.5, 0.5, 0.1)  # 设定PID值
+    # TestPID(-4.03, 1.23, 0.48)
+
     options = {'c1': 0.5, 'c2': 0.3, 'w': 0.9}
-    x_max = 5 * np.ones(3)
-    x_min = -1 * x_max
+    # x_max = 5 * np.ones(3)
+    x_max = np.array([5, 3, 1])
+    x_min = 0 * x_max
     bounds = (x_min, x_max)
-    optimizer = GlobalBestPSO(n_particles=40, dimensions=3, options=options, bounds=bounds)
-    cost, pos = optimizer.optimize(rosenbrock_with_args, 1000, target_qzy=100.2)
+    particle = 100
+    target = 20
+    optimizer = GlobalBestPSO(n_particles=particle, dimensions=3, options=options, bounds=bounds)
+    cost, pos = optimizer.optimize(rosenbrock_with_args, 1000, n=particle, t=50, target_qzy=target)
     # cost, pos = optimizer.optimize(rosenbrock_with_args, 1000, a=1, b=100, c=0)
 
     TestPID(pos[0], pos[1], pos[2])  # 设定PID值

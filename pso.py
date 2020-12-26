@@ -18,7 +18,7 @@ import PID
     # return Err
 
 # def rosenbrock_with_args(x, a, b, c=0):
-def rosenbrock_with_args(x, target_qzy):
+def rosenbrock_with_args(x, n, t, target_qzy):
 #     x1 = x[:, 0]
 #     x2 = x[:, 1]
 #     x3 = a - x[:, 0]
@@ -28,16 +28,16 @@ def rosenbrock_with_args(x, target_qzy):
     # Err = np.zeros(50)
     y = np.zeros(50)
     s = np.zeros(50)
-    PositionalYaxis = np.zeros([40,50])
-    Err = np.zeros([40,50])
+    PositionalYaxis = np.zeros([n, t])
+    Err = np.zeros([n, t])
 
     PositionalPid = PID.PositionalPID(x[:, 0], x[:, 1], x[:, 2])
 
 
-    for i in range(50):
-        PositionalPid.SetStepSignal(100.2)
+    for i in range(t):
+        PositionalPid.SetStepSignal(target_qzy)
         PositionalPid.SetInertiaTime(3, 0.1)
-        PositionalYaxis[:,i] = PositionalPid.SystemOutput
+        PositionalYaxis[:, i] = PositionalPid.SystemOutput
         # PositionalYaxis.append(PositionalPid.SystemOutput)
         # PositionalPid = PID.PositionalPID(x[:, 0], x[:, 1], x[:, 2])
         # Err[i] = target_qzy - PositionalPid.PIDOutput
