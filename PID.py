@@ -40,13 +40,13 @@ class PID:
         delta_time = self.current_time - self.last_time  # 微分中的两次时间差，如果只有一次，则lasttime=0
         delta_error = error - self.last_error  # 微分中误差值
 
-        if (delta_time >= self.sample_time):  # 两次反馈值得时间间隔和采样时间如果相等
+        if delta_time >= self.sample_time:  # 两次反馈值得时间间隔和采样时间如果相等
             self.PTerm = self.Kp * error  # 计算比例值部分
             self.ITerm += error * delta_time  # 计算积分部分
             # 避免第一次温度升到100摄氏度过程中积分后产生过冲，将值设为20或-20，n次后，积分的各值有正负基本不会超过20.
-            if (self.ITerm < -self.windup_guard):
+            if self.ITerm < -self.windup_guard:
                 self.ITerm = -self.windup_guard
-            elif (self.ITerm > self.windup_guard):
+            elif self.ITerm > self.windup_guard:
                 self.ITerm = self.windup_guard
 
             self.DTerm = 0.0  # 应该不等于0也没问题，微分就是和后两次的误差和时间有关
